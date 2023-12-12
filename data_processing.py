@@ -18,5 +18,20 @@ df_tidy = pd.merge(df, df_names, on='Date', how='left')
 # drop irrelevant columns
 cols_to_drop = ['Participants (number, office, charge out rate)', 'TBC', 'TBC with Keith', '', 'Unnamed: 10', "Can't remember"]
 df_tidy = df_tidy.drop(columns=cols_to_drop)
+df_tidy = pd.merge(df, df_names, on='Date', how='left')
+print(df_tidy.columns)
 
-print(df_tidy)
+# add weather data
+weather_df = pd.read_csv('weather_data.csv')
+weather_df['datetime'] = pd.to_datetime(weather_df['datetime'], format='mixed',dayfirst=True)
+weather_df.rename(columns={'datetime': 'Date'}, inplace=True)
+
+df_tidy = pd.merge(df_tidy, weather_df, on='Date', how='left')
+
+# add staff info (charge out rate, employee #)
+staff_df = pd.read_excel('staff_info.xlsx')
+
+
+
+
+
