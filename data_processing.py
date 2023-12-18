@@ -17,10 +17,9 @@ df_names = df_large.groupby('Date')[bool_columns].sum().reset_index()
 df_tidy = pd.merge(df, df_names, on='Date', how='left')
 
 # drop irrelevant columns
+df_tidy = pd.merge(df, df_names, on='Date', how='left')
 cols_to_drop = ['Participants (number, office, charge out rate)', 'TBC', 'TBC with Keith', '', 'Unnamed: 10', "Can't remember", "Can't remember"]
 df_tidy = df_tidy.drop(columns=cols_to_drop)
-df_tidy = pd.merge(df, df_names, on='Date', how='left')
-print(df_tidy.columns)
 
 # add weather data
 weather_df = pd.read_csv('full_weather_data.csv')
@@ -28,7 +27,7 @@ weather_df['datetime'] = pd.to_datetime(weather_df['datetime'], format='mixed',d
 weather_df.rename(columns={'datetime': 'Date'}, inplace=True)
 
 df_tidy = pd.merge(df_tidy, weather_df, on='Date', how='left')
-
+df_tidy = df_tidy.drop(columns='Date')
 # add staff info (charge out rate, employee #)
 staff_df = pd.read_excel('staff_info.xlsx')
 
@@ -36,7 +35,7 @@ staff_df = pd.read_excel('staff_info.xlsx')
 df_tidy['Total_Charge_out_rate'] = 0
 
 # Iterate over staff columns and merge data
-for staff_column in df_tidy.columns[12:52]:
+for staff_column in df_tidy.columns[8:45]:
     # Extract staff number from column name
     matched_row = staff_df[staff_df['Name'].str.contains(staff_column, case=False)]
     if matched_row.empty:
@@ -47,8 +46,9 @@ for staff_column in df_tidy.columns[12:52]:
     # Sum charge out rates for each meeting
     df_tidy['Total_Charge_out_rate'] += df_tidy[staff_column]*rate
 
-# Display the result
-print(df_tidy)
+# Save the result
+df_tidy.to_csv('tidy_data.csv', index=False)
+
 
 
 
