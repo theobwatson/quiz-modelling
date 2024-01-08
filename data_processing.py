@@ -46,6 +46,11 @@ for staff_column in df_tidy.columns[8:45]:
     # Sum charge out rates for each meeting
     df_tidy['Total_Charge_out_rate'] += df_tidy[staff_column]*rate
 
+
+# Adjust the first 3 values of '4 week rolling average' to remove NaN.
+values = [11, 10.5, 11.33]
+df_tidy['4 week rolling average'][0:3] = values
+
 # Save the result
 df_tidy.to_csv('tidy_data.csv', index=False)
 
